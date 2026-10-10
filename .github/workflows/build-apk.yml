@@ -1,0 +1,36 @@
+name: Build APK
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Phoenix temasi
+        run: |
+          unzip -o PhoenixLauncher.zip
+          python3 phoenix/phoenix_overlay/apply_phoenix.py
+      - name: Java ve LWJGL dosyalarini hazir APK'dan al
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download base -p base.apk
+          unzip -q base.apk 'assets/components/*' -d base_extract
+          mkdir -p app_pojavlauncher/src/main/assets/components
+          cp -r base_extract/assets/components/. app_pojavlauncher/src/main/assets/components/
+      - name: Dil listesi
+        run: |
+          chmod +x scripts/languagelist_updater.sh
+          bash scripts/languagelist_updater.sh
+      - run: chmod +x gradlew
+      - run: ./gradlew :jre_lwjgl3glfw:build
+      - run: ./gradlew :app_pojavlauncher:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PhoenixLauncher-debug
+          path: app_pojavlauncher/build/outputs/apk/debug/*.apk
