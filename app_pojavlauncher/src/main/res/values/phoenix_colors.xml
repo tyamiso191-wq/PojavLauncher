@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="phoenix_bg">#09090D</color>
+    <color name="phoenix_card">#191923</color>
+    <color name="phoenix_accent">#B000FF</color>
+    <color name="phoenix_accent2">#7928CA</color>
+    <color name="phoenix_text">#FFFFFF</color>
+    <color name="phoenix_text2">#A5A5B5</color>
+</resources>
